@@ -12,5 +12,6 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.get("/getprofile", getProfile);
 router.post("/updateprofile", authMiddleware, updateProfile);
+// router.get("/cardlist",)
 
 module.exports = router;
