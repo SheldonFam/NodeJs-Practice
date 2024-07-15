@@ -20,14 +20,24 @@ const getProfile = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
+  const { displayusername, timestamp } = req.body;
+
+  if (!displayusername || !timestamp) {
+    return res.status(400).json({ msg: "Please provide all required fields" });
+  }
+
   try {
-    const { displayusername, timestamp } = req.body;
-    const userId = req.user._id; // Assuming uid is the user's ID in the database
+    const user = await User.findById(req.user.id);
 
-    // Update user's displayusername
-    await User.findByIdAndUpdate(userId, { displayusername });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    user.displayusername = displayusername;
+    user.timestamp = timestamp;
 
-    res.sendStatus(200); // Successfully updated
+    await user.save();
+
+    res.status(200).json({ msg: "User profile updated successfully" }); // Successfully updated
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Server Error" });
